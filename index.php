@@ -40,6 +40,7 @@ require __DIR__ . '/includes/header.php';
   const info = <?= json_encode(array_column($gaya, 'kalimat_hasil', 'kode'), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?>;
   document.querySelectorAll('.mas').forEach(b => b.onclick = () => {
     document.querySelectorAll('.mas').forEach(x => x.setAttribute('aria-pressed', x === b));
+    document.getElementById('trioNote').className = 'trioNote ' + b.dataset.kode.toLowerCase();
     document.getElementById('trioNote').textContent = info[b.dataset.kode];
   });
 </script>
