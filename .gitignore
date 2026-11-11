@@ -1,0 +1,10 @@
+# Foto profil tiap pengguna (jangan diunggah), tetapi pertahankan .htaccess pengaman
+uploads/*
+!uploads/.htaccess
+
+# Berkas sistem dan editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
