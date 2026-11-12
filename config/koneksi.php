@@ -73,3 +73,51 @@ function csrf_periksa(): void {
         exit('Permintaan tidak valid. Muat ulang halaman lalu coba lagi.');
     }
 }
+
+
+// Warna tiap gaya belajar: [warna utama, warna latar lembut]
+const WARNA_GAYA = [
+    'V' => ['#8B7CF0', '#ECE8FF'],
+    'A' => ['#FF9F7A', '#FFE9DE'],
+    'K' => ['#5CCB9C', '#DDF6EA'],
+];
+
+// Simpan data pengguna ke session setelah daftar atau masuk
+function masukkan_sesi(array $u): void {
+    session_regenerate_id(true); // cegah session fixation
+    $_SESSION['user'] = [
+        'id'    => (int)$u['id'],
+        'nama'  => $u['nama'],
+        'email' => $u['email'],
+        'role'  => $u['role'],
+    ];
+}
+
+function nama_depan(string $nama): string {
+    return explode(' ', trim($nama))[0];
+}
+
+function tanggal_id(string $waktu): string {
+    $bulan = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    $t = strtotime($waktu);
+    return date('j', $t) . ' ' . $bulan[(int)date('n', $t)] . ' ' . date('Y', $t);
+}
+
+
+// Hasil kuis yang dikerjakan tamu disimpan sementara di session.
+// Setelah tamu masuk atau daftar, hasil itu dipindahkan ke riwayat. Mengembalikan id hasil, atau null.
+function simpan_hasil_tertunda(mysqli $db, int $uid): ?int {
+    $t = $_SESSION['hasil_tertunda'] ?? null;
+    unset($_SESSION['hasil_tertunda']);
+    if (!$t || time() - (int)$t['t'] > 3600) {      // kedaluwarsa setelah 1 jam
+        return null;
+    }
+    $v = (int)$t['v']; $a = (int)$t['a']; $k = (int)$t['k']; $g = (int)$t['g'];
+    if ($g < 1 || $g > 3 || min($v, $a, $k) < 0 || max($v, $a, $k) > 100) {
+        return null;
+    }
+    $stmt = $db->prepare('INSERT INTO hasil_kuis (user_id, persen_visual, persen_auditori, persen_kinestetik, gaya_utama_id) VALUES (?, ?, ?, ?, ?)');
+    $stmt->bind_param('iiiii', $uid, $v, $a, $k, $g);
+    $stmt->execute();
+    return $db->insert_id;
+}
