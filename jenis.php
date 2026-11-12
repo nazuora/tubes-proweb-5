@@ -44,7 +44,7 @@ require __DIR__ . '/includes/header.php';
   </article>
 <?php endforeach; ?>
 
-<p><a class="btn" href="<?= url(!empty($_SESSION['user']) ? '/kuis.php' : '/daftar.php') ?>">Cari tahu gaya belajarmu</a></p>
+<p><a class="btn" href="<?= url('/kuis.php') ?>">Cari tahu gaya belajarmu</a></p>
 
 <script>
   document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
