@@ -4,6 +4,7 @@ wajib_admin();
 
 $pesan = '';
 $error = '';
+$edit  = ['id' => 0, 'teks' => '', 'j' => [1 => '', 2 => '', 3 => '']];
 
 // ===== CREATE, UPDATE, DELETE =====
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -26,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($teks === '' || in_array('', $jwb, true)) {
             $error = 'Isi pertanyaan dan ketiga jawabannya.';
+            $edit  = ['id' => $id, 'teks' => $teks, 'j' => $jwb];   // pertahankan isian
         } else {
             $db->begin_transaction();
             try {
@@ -64,8 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // ===== Data untuk formulir ubah =====
-$edit = ['id' => 0, 'teks' => '', 'j' => [1 => '', 2 => '', 3 => '']];
-if (isset($_GET['ubah'])) {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_GET['ubah'])) {
     $id = (int)$_GET['ubah'];
     $stmt = $db->prepare('SELECT id, teks FROM pertanyaan WHERE id = ?');
     $stmt->bind_param('i', $id);
@@ -81,51 +82,74 @@ if (isset($_GET['ubah'])) {
         }
     }
 }
+$tampilForm = isset($_GET['tambah']) || ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_GET['ubah'])) || $error !== '';
 
 // ===== READ: daftar pertanyaan =====
 $daftar = $db->query('SELECT id, teks FROM pertanyaan ORDER BY urutan, id')->fetch_all(MYSQLI_ASSOC);
-$judul = 'Admin: Pertanyaan Kuis'; require __DIR__ . '/../includes/header.php';
+
+$judul = 'Admin: Pertanyaan Kuis';
+require __DIR__ . '/../includes/header.php';
 ?>
+<div class="narrow" style="max-width:720px">
+  <h1 class="s">Panel admin</h1>
+  <p class="sub">Kelola isi web tanpa mengubah kode. Perubahan langsung tampil di halaman Kuis dan Jenis.</p>
 
-    <h1>Pertanyaan kuis</h1>
-    <?php if ($pesan): ?><p class="msg" role="status"><?= e($pesan) ?></p><?php endif; ?>
-    <?php if ($error): ?><p class="err" role="alert"><?= e($error) ?></p><?php endif; ?>
+  <div class="seg">
+    <a href="<?= e(url('/admin/pertanyaan.php')) ?>" aria-selected="true">Pertanyaan kuis</a>
+    <a href="<?= e(url('/admin/gaya.php')) ?>" aria-selected="false">Isi gaya belajar</a>
+  </div>
 
-    <p><b><?= count($daftar) ?> pertanyaan</b></p>
-    <ol>
-      <?php foreach ($daftar as $p): ?>
-        <li>
-          <?= e($p['teks']) ?>
-          <a href="?ubah=<?= (int)$p['id'] ?>">Ubah</a>
-          <form method="post" style="display:inline" onsubmit="return confirm('Hapus pertanyaan ini?')">
-            <?= csrf_field() ?>
-            <input type="hidden" name="aksi" value="hapus">
-            <input type="hidden" name="id" value="<?= (int)$p['id'] ?>">
-            <button type="submit">Hapus</button>
-          </form>
-        </li>
-      <?php endforeach; ?>
-    </ol>
+  <div class="actions" style="align-items:center;margin:0 0 12px">
+    <b><?= count($daftar) ?> pertanyaan</b>
+    <a class="btn" href="?tambah=1">+ Tambah pertanyaan</a>
+  </div>
 
-    <h2><?= $edit['id'] ? 'Ubah pertanyaan' : 'Tambah pertanyaan' ?></h2>
-    <form method="post">
-      <?= csrf_field() ?>
-      <input type="hidden" name="aksi" value="simpan">
-      <input type="hidden" name="id" value="<?= (int)$edit['id'] ?>">
+  <?php if ($pesan): ?><div class="msg" role="status"><?= e($pesan) ?></div><?php endif; ?>
+  <?php if ($error): ?><div class="err" role="alert"><?= e($error) ?></div><?php endif; ?>
 
-      <label for="teks">Pertanyaan</label>
-      <input id="teks" name="teks" value="<?= e($edit['teks']) ?>" required>
+  <?php foreach ($daftar as $no => $p): ?>
+    <div class="arow">
+      <div class="at"><b><?= $no + 1 ?>.</b> <?= e($p['teks']) ?></div>
+      <div class="ab">
+        <a class="btn ghost sm" href="?ubah=<?= (int)$p['id'] ?>">Ubah</a>
+        <form method="post">
+          <?= csrf_field() ?>
+          <input type="hidden" name="aksi" value="hapus">
+          <input type="hidden" name="id" value="<?= (int)$p['id'] ?>">
+          <button type="button" class="btn red sm del">Hapus</button>
+        </form>
+      </div>
+    </div>
+  <?php endforeach; ?>
 
-      <label for="j1">Jawaban gaya Visual</label>
-      <input id="j1" name="j1" value="<?= e($edit['j'][1]) ?>" required>
-
-      <label for="j2">Jawaban gaya Auditori</label>
-      <input id="j2" name="j2" value="<?= e($edit['j'][2]) ?>" required>
-
-      <label for="j3">Jawaban gaya Kinestetik</label>
-      <input id="j3" name="j3" value="<?= e($edit['j'][3]) ?>" required>
-
-      <button type="submit">Simpan</button>
-      <?php if ($edit['id']): ?><a href="pertanyaan.php">Batal</a><?php endif; ?>
-    </form>
+  <?php if ($tampilForm): ?>
+    <section class="card">
+      <h2 style="margin-top:0"><?= $edit['id'] ? 'Ubah pertanyaan' : 'Tambah pertanyaan' ?></h2>
+      <form method="post">
+        <?= csrf_field() ?>
+        <input type="hidden" name="aksi" value="simpan">
+        <input type="hidden" name="id" value="<?= (int)$edit['id'] ?>">
+        <label class="l" for="teks">Pertanyaan</label>
+        <input class="t" id="teks" name="teks" value="<?= e($edit['teks']) ?>" autocomplete="off">
+        <label class="l" for="j1" style="margin-top:8px">Jawaban gaya Visual</label>
+        <input class="t" id="j1" name="j1" value="<?= e($edit['j'][1]) ?>" autocomplete="off">
+        <label class="l" for="j2" style="margin-top:8px">Jawaban gaya Auditori</label>
+        <input class="t" id="j2" name="j2" value="<?= e($edit['j'][2]) ?>" autocomplete="off">
+        <label class="l" for="j3" style="margin-top:8px">Jawaban gaya Kinestetik</label>
+        <input class="t" id="j3" name="j3" value="<?= e($edit['j'][3]) ?>" autocomplete="off">
+        <div class="actions" style="justify-content:flex-start">
+          <button class="btn" type="submit">Simpan</button>
+          <a class="btn ghost" href="<?= e(url('/admin/pertanyaan.php')) ?>">Batal</a>
+        </div>
+      </form>
+    </section>
+  <?php endif; ?>
+</div>
+<script>
+  // Hapus: klik dua kali agar tidak terhapus tanpa sengaja
+  document.querySelectorAll('.del').forEach(b => b.onclick = () => {
+    if (b.dataset.sure) { b.closest('form').submit(); }
+    else { b.dataset.sure = 1; b.textContent = 'Klik lagi'; }
+  });
+</script>
 <?php require __DIR__ . '/../includes/footer.php'; ?>
