@@ -1,8 +1,5 @@
 <?php
 // includes/header.php
-// Pakai di setiap halaman, SETELAH require koneksi.php dan SEBELUM isi halaman:
-//   $judul = 'Judul Halaman';
-//   require __DIR__ . '/includes/header.php';
 $halaman  = basename($_SERVER['SCRIPT_NAME']);
 $pengguna = $_SESSION['user'] ?? null;
 
@@ -14,10 +11,10 @@ function nav_item(string $href, string $label, bool $aktif): string {
 <html lang="id">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title><?= e($judul ?? 'Kenali Gaya Belajarmu') ?></title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/style.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/style.css?v=<?= (int)@filemtime(__DIR__ . '/../assets/style.css') ?>">
 </head>
 <body>
 <header><div class="wrap"><nav aria-label="Navigasi utama">
@@ -31,7 +28,7 @@ function nav_item(string $href, string $label, bool $aktif): string {
       <?= nav_item('/admin/pertanyaan.php', 'Admin', in_array($halaman, ['pertanyaan.php', 'gaya.php'], true)) ?>
     <?php endif; ?>
     <?php if ($pengguna): ?>
-      <?= nav_item('/profil.php', nama_depan($pengguna['nama']), $halaman === 'profil.php') ?>
+      <?= nav_item('/profil.php', explode(' ', trim($pengguna['nama']))[0], $halaman === 'profil.php') ?>
     <?php else: ?>
       <?= nav_item('/masuk.php', 'Masuk', in_array($halaman, ['masuk.php', 'daftar.php'], true)) ?>
     <?php endif; ?>
