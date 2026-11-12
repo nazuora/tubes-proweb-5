@@ -104,9 +104,6 @@ require __DIR__ . '/../includes/header.php';
     <a class="btn" href="?tambah=1">+ Tambah pertanyaan</a>
   </div>
 
-  <?php if ($pesan): ?><div class="msg" role="status"><?= e($pesan) ?></div><?php endif; ?>
-  <?php if ($error): ?><div class="err" role="alert"><?= e($error) ?></div><?php endif; ?>
-
   <?php foreach ($daftar as $no => $p): ?>
     <div class="arow">
       <div class="at"><b><?= $no + 1 ?>.</b> <?= e($p['teks']) ?></div>
@@ -121,6 +118,8 @@ require __DIR__ . '/../includes/header.php';
       </div>
     </div>
   <?php endforeach; ?>
+
+  <div class="msg" role="status"><?= e($pesan) ?></div>
 
   <?php if ($tampilForm): ?>
     <section class="card">
@@ -137,6 +136,7 @@ require __DIR__ . '/../includes/header.php';
         <input class="t" id="j2" name="j2" value="<?= e($edit['j'][2]) ?>" autocomplete="off">
         <label class="l" for="j3" style="margin-top:8px">Jawaban gaya Kinestetik</label>
         <input class="t" id="j3" name="j3" value="<?= e($edit['j'][3]) ?>" autocomplete="off">
+        <div class="err" role="alert"><?= e($error) ?></div>
         <div class="actions" style="justify-content:flex-start">
           <button class="btn" type="submit">Simpan</button>
           <a class="btn ghost" href="<?= e(url('/admin/pertanyaan.php')) ?>">Batal</a>

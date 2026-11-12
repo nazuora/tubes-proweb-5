@@ -59,7 +59,7 @@ require __DIR__ . '/../includes/header.php';
       <label class="l" for="kalimat">Kalimat di kartu hasil</label>
       <textarea class="t" id="kalimat" name="kalimat" rows="2"><?= e($aktif['kalimat_hasil']) ?></textarea>
       <button class="btn" type="submit">Simpan perubahan</button>
-      <?php if ($pesan): ?><div class="msg" role="status"><?= e($pesan) ?></div><?php endif; ?>
+      <div class="msg" role="status"><?= e($pesan) ?></div>
       <?php if ($error): ?><div class="err" role="alert"><?= e($error) ?></div><?php endif; ?>
     </form>
   </section>
