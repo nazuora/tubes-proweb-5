@@ -73,9 +73,6 @@ $judul = 'Masuk';
 require __DIR__ . '/includes/header.php';
 ?>
 <div class="narrow" style="max-width:440px">
-  <?php if (!empty($_SESSION['hasil_tertunda'])): ?>
-    <div class="msg" style="margin:0 0 12px">Hasil kuismu akan otomatis tersimpan setelah kamu masuk atau daftar.</div>
-  <?php endif; ?>
   <div class="card">
     <div class="seg" role="tablist">
       <button type="button" role="tab" id="t-in" aria-selected="<?= $tab === 'masuk' ? 'true' : 'false' ?>">Masuk</button>

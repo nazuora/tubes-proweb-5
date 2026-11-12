@@ -34,10 +34,6 @@ require __DIR__ . '/includes/header.php';
     </div>
   </section>
 
-  <?php if (empty($_SESSION['user'])): ?>
-    <p class="hint">Kamu bisa mengerjakan kuis tanpa masuk. <a href="<?= e(url('/masuk.php')) ?>" style="color:var(--blue);font-weight:900">Masuk</a> agar hasilnya tersimpan di Riwayat.</p>
-  <?php endif; ?>
-
   <form id="kirim" method="post" action="<?= e(url('/hasil.php')) ?>" hidden><?= csrf_field() ?></form>
 
   <script>

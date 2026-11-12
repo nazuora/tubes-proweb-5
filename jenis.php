@@ -12,12 +12,12 @@ function baris(?string $teks): array {
 $judul = 'Jenis Gaya Belajar';
 require __DIR__ . '/includes/header.php';
 ?>
-<h1>Jenis gaya belajar</h1>
-<p class="lead">Gaya belajar adalah cara yang paling nyaman bagi seseorang untuk menerima dan mengingat informasi. Pilih satu maskot untuk mengenalnya.</p>
+<h1 class="s">Jenis gaya belajar</h1>
+<p class="sub">Gaya belajar adalah cara yang paling nyaman bagi seseorang untuk menerima dan mengingat informasi. Pilih salah satu untuk mengenalnya.</p>
 
 <div class="tabs" role="tablist">
   <?php foreach ($gaya as $i => $g): ?>
-    <button type="button" role="tab" class="<?= e(strtolower($g['kode'])) ?>" data-kode="<?= e($g['kode']) ?>" aria-selected="<?= $i === 0 ? 'true' : 'false' ?>">
+    <button type="button" role="tab" class="<?= e(strtolower($g['kode'])) ?>" data-kode="<?= e($g['kode']) ?>" data-k="<?= e(strtolower($g['kode'])) ?>" aria-selected="<?= $i === 0 ? 'true' : 'false' ?>">
       <?= ikon($g['kode']) ?><?= e($g['nama']) ?>
     </button>
   <?php endforeach; ?>
@@ -30,21 +30,21 @@ require __DIR__ . '/includes/header.php';
       <p><?= e($g['pengertian']) ?></p>
     </div>
 
-    <h3>Ciri-cirimu</h3>
+    <h3 class="sec">Ciri-cirimu</h3>
     <div class="chips">
       <?php foreach (baris($g['ciri']) as $c): ?><span><?= e($c) ?></span><?php endforeach; ?>
     </div>
 
-    <h3>Coba cara ini</h3>
+    <h3 class="sec">Coba cara ini</h3>
     <div class="notes">
-      <?php foreach (baris($g['tips']) as $t): ?><div class="note"><?= e($t) ?></div><?php endforeach; ?>
+      <?php foreach (baris($g['tips']) as $n => $t): ?><div class="note n<?= $n % 3 ?>"><?= e($t) ?></div><?php endforeach; ?>
     </div>
 
     <?php if ($g['bidang']): ?><p class="bd">Cocok untuk: <?= e($g['bidang']) ?></p><?php endif; ?>
   </article>
 <?php endforeach; ?>
 
-<p><a class="btn" href="<?= url('/kuis.php') ?>">Cari tahu gaya belajarmu</a></p>
+<p style="margin-top:18px"><a class="btn" href="<?= url('/kuis.php') ?>">Cari tahu gaya belajarmu</a></p>
 
 <script>
   document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
