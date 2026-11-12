@@ -71,52 +71,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute();
             $_SESSION = [];
             session_destroy();
-            header('Location: ' . url('/masuk.php'));
+            header('Location: ' . url('/'));
             exit;
         }
     }
 }
-$judul = 'Profil'; $sempit = true; require __DIR__ . '/includes/header.php';
+
+$judul = 'Profil';
+require __DIR__ . '/includes/header.php';
 ?>
+<div class="narrow" style="max-width:520px">
+  <h1 class="s">Profilmu</h1>
+  <?php if ($pesan): ?><div class="msg" role="status"><?= e($pesan) ?></div><?php endif; ?>
+  <?php if ($error): ?><div class="err" role="alert"><?= e($error) ?></div><?php endif; ?>
 
-    <h1>Profilmu</h1>
-    <?php if ($pesan): ?><p class="msg" role="status"><?= e($pesan) ?></p><?php endif; ?>
-    <?php if ($error): ?><p class="err" role="alert"><?= e($error) ?></p><?php endif; ?>
-
-    <?php if ($user['foto']): ?>
-      <img src="<?= BASE_URL ?>/uploads/<?= e(basename($user['foto'])) ?>" alt="Foto profil" width="96" height="96" style="border-radius:50%;object-fit:cover">
-    <?php else: ?>
-      <div aria-hidden="true" style="width:96px;height:96px;border-radius:50%;background:#ECE8FF;display:grid;place-items:center;font-size:2rem">
-        <?= e(mb_strtoupper(mb_substr($user['nama'], 0, 1))) ?>
+  <form class="card" method="post" enctype="multipart/form-data" novalidate>
+    <?= csrf_field() ?>
+    <input type="hidden" name="aksi" value="simpan">
+    <div class="who">
+      <div class="ava" id="ava" aria-hidden="true">
+        <?php if ($user['foto']): ?>
+          <img alt="" src="<?= BASE_URL ?>/uploads/<?= e(basename($user['foto'])) ?>">
+        <?php else: ?>
+          <?= e(mb_strtoupper(mb_substr($user['nama'], 0, 1))) ?>
+        <?php endif; ?>
       </div>
-    <?php endif; ?>
+      <div>
+        <strong><?= e($user['nama']) ?></strong><br>
+        <label class="file">Ganti foto<input type="file" id="foto" name="foto" accept="image/jpeg,image/png,image/webp"></label>
+      </div>
+    </div>
 
-    <form method="post" enctype="multipart/form-data" novalidate>
-      <?= csrf_field() ?>
-      <input type="hidden" name="aksi" value="simpan">
+    <label class="l" for="nama">Nama</label>
+    <input class="t" id="nama" name="nama" value="<?= e($user['nama']) ?>" autocomplete="name">
+    <div class="err"></div>
+    <label class="l" for="email">Email</label>
+    <input class="t" id="email" value="<?= e($user['email']) ?>" readonly aria-describedby="petunjuk">
+    <div class="hint" id="petunjuk" style="margin-bottom:12px">Email tidak bisa diubah. Foto: JPG, PNG, atau WebP, maks. 2 MB.</div>
+    <div class="actions" style="justify-content:flex-start;align-items:center">
+      <button class="btn" type="submit">Simpan perubahan</button>
+      <a class="btn ghost" href="<?= e(url('/keluar.php')) ?>">Keluar</a>
+    </div>
+  </form>
 
-      <label for="nama">Nama</label>
-      <input id="nama" name="nama" value="<?= e($user['nama']) ?>" autocomplete="name">
-
-      <label for="email">Email</label>
-      <input id="email" value="<?= e($user['email']) ?>" readonly aria-describedby="petunjuk">
-      <small id="petunjuk">Email tidak bisa diubah.</small>
-
-      <label for="foto">Ganti foto (JPG, PNG, WebP, maks. 2 MB)</label>
-      <input id="foto" name="foto" type="file" accept="image/jpeg,image/png,image/webp">
-
-      <button type="submit">Simpan perubahan</button>
-    </form>
-
+  <form class="card danger" method="post" onsubmit="return confirm('Yakin hapus akun? Ini tidak bisa dibatalkan.')">
+    <?= csrf_field() ?>
+    <input type="hidden" name="aksi" value="hapus_akun">
     <h2>Hapus akun</h2>
     <p>Akun dan seluruh riwayat kuismu akan dihapus permanen dan tidak bisa dikembalikan.</p>
-    <form method="post" onsubmit="return confirm('Yakin hapus akun? Ini tidak bisa dibatalkan.')">
-      <?= csrf_field() ?>
-      <input type="hidden" name="aksi" value="hapus_akun">
-      <label for="sandi">Masukkan kata sandi untuk konfirmasi</label>
-      <input id="sandi" name="sandi" type="password" required autocomplete="current-password">
-      <button type="submit">Hapus akun saya</button>
-    </form>
-
-    <p><a href="<?= BASE_URL ?>/kuis.php">Kuis</a> · <a href="<?= BASE_URL ?>/riwayat.php">Riwayat</a> · <a href="<?= BASE_URL ?>/keluar.php">Keluar</a></p>
+    <label class="l" for="sandi">Masukkan kata sandi untuk konfirmasi</label>
+    <input class="t" id="sandi" name="sandi" type="password" required autocomplete="current-password" style="margin-bottom:12px">
+    <button class="btn red" type="submit">Hapus akun saya</button>
+  </form>
+</div>
+<script>
+  // Pratinjau foto sebelum disimpan
+  document.getElementById('foto').onchange = e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = () => { document.getElementById('ava').innerHTML = '<img alt="" src="' + r.result + '">'; };
+    r.readAsDataURL(f);
+  };
+</script>
 <?php require __DIR__ . '/includes/footer.php'; ?>
