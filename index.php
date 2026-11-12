@@ -4,6 +4,8 @@ require __DIR__ . '/includes/ikon.php';
 
 $gaya  = $db->query('SELECT kode, nama, kalimat_hasil FROM gaya_belajar ORDER BY id')->fetch_all(MYSQLI_ASSOC);
 $login = !empty($_SESSION['user']);
+
+// Kartu "Coba satu pertanyaan": pertanyaan pertama + tiga jawabannya, langsung dari database
 $coba = null;
 $q = $db->query('SELECT id, teks FROM pertanyaan ORDER BY urutan, id LIMIT 1')->fetch_assoc();
 if ($q) {
@@ -25,7 +27,7 @@ require __DIR__ . '/includes/header.php';
     <h1>Temukan cara belajar yang paling pas untukmu.</h1>
     <p class="lead">Jawab pertanyaan seputar situasi sehari-hari. Kamu akan dapat profil gaya belajar dan tips yang bisa langsung dipraktikkan.</p>
     <p>
-      <a class="btn" href="<?= url($login ? '/kuis.php' : '/daftar.php') ?>">Mulai kuis</a>
+      <a class="btn" href="<?= url('/kuis.php') ?>">Mulai kuis</a>
       <a class="btn ghost" href="<?= BASE_URL ?>/jenis.php">Lihat jenis gaya belajar</a>
     </p>
   </div>
