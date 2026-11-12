@@ -26,10 +26,7 @@ require __DIR__ . '/includes/header.php';
   <div>
     <h1>Temukan cara belajar yang paling pas untukmu.</h1>
     <p class="lead">Jawab pertanyaan seputar situasi sehari-hari. Kamu akan dapat profil gaya belajar dan tips yang bisa langsung dipraktikkan.</p>
-    <p>
-      <a class="btn" href="<?= url('/kuis.php') ?>">Mulai kuis</a>
-      <a class="btn ghost" href="<?= BASE_URL ?>/jenis.php">Lihat jenis gaya belajar</a>
-    </p>
+    <div class="links" style="gap:12px"><a href="<?= e(url('/kuis.php')) ?>" class="btn">Mulai kuis</a><a href="<?= e(url('/jenis.php')) ?>" class="btn ghost">Lihat jenis gaya belajar</a></div>
   </div>
   <?php if ($coba): ?>
     <div class="cobacard" aria-labelledby="judulcoba">
@@ -43,7 +40,7 @@ require __DIR__ . '/includes/header.php';
   <?php endif; ?>
 </section>
 
-<h2 class="tengah">Kenalan dengan tiga maskot</h2>
+<h2 style="margin-top:48px;text-align:center">Kenalan dengan tiga maskot</h2>
 <div class="trio">
   <?php foreach ($gaya as $g): ?>
     <button type="button" class="mas <?= e(strtolower($g['kode'])) ?>" data-kode="<?= e($g['kode']) ?>" aria-pressed="false">
@@ -53,7 +50,7 @@ require __DIR__ . '/includes/header.php';
 </div>
 <div class="trioNote" id="trioNote" aria-live="polite">Ketuk satu maskot untuk berkenalan.</div>
 
-<h2 class="tengah">Cara kerjanya</h2>
+<h2 style="margin-top:36px;font-size:1.5rem">Cara kerjanya</h2>
 <ol class="steps">
   <li><strong>Buat akun</strong><span>Supaya hasilmu tersimpan.</span></li>
   <li><strong>Jawab kuis</strong><span>Pilih jawaban yang paling mirip kebiasaanmu.</span></li>

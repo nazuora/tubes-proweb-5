@@ -120,7 +120,7 @@ require __DIR__ . '/includes/header.php';
     <?php if ($login): ?>
       <div class="msg">Hasil tersimpan di Riwayat.</div>
     <?php else: ?>
-      <p class="hint" style="margin-top:12px">Masuk atau daftar, hasil ini otomatis tersimpan di Riwayat. <a href="<?= e(url('/masuk.php')) ?>" style="color:var(--blue);font-weight:900">Masuk sekarang</a></p>
+      <div class="msg"><span style="color:var(--muted)">Masuk agar hasil tersimpan di Riwayat. <a href="<?= e(url('/masuk.php')) ?>" style="color:var(--blue);font-weight:900">Masuk sekarang</a></span></div>
     <?php endif; ?>
 
     <div class="actions">
